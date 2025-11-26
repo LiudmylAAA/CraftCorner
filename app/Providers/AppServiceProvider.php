@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Route;
 
 class AppServiceProvider extends ServiceProvider
 {
+      public const HOME = '/';
     /**
      * Register any application services.
      */
@@ -19,6 +21,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Route::middleware('web')
+            ->group(base_path('routes/web.php'));
+
+        // API маршрути
+        Route::prefix('api')
+            ->middleware('api')
+            ->group(base_path('routes/api.php'));
     }
 }
