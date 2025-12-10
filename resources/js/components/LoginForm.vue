@@ -8,14 +8,34 @@
 
 <script>
 import axios from 'axios';
+
 export default {
-  data() { return { email:'', password:'' }; },
+  data() {
+    return {
+      email: '',
+      password: ''
+    };
+  },
   methods: {
     async submitLogin() {
       try {
-        const res = await axios.post('/api/login', { email: this.email, password: this.password });
-        alert(res.data.message);
-      } catch(e) { alert(e.response.data.message || 'Помилка'); }
+        const res = await axios.post('/api/login', {
+          email: this.email,
+          password: this.password
+        });
+
+        // Зберігаємо користувача в localStorage
+        localStorage.setItem('user', JSON.stringify(res.data.user));
+
+        // Відправляємо дані в Header/App.vue
+        this.$emit('login-success', res.data.user);
+
+        // Перехід на Dashboard
+        this.$router.push('/dashboard');
+
+      } catch (e) {
+        alert(e.response?.data?.message || 'Помилка авторизації');
+      }
     }
   }
 };

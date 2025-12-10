@@ -10,13 +10,30 @@
 <script>
 import axios from 'axios';
 export default {
-  data() { return { name:'', email:'', password:'' }; },
+  data() {
+    return { name:'', email:'', password:'' };
+  },
   methods: {
     async submitRegister() {
       try {
-        const res = await axios.post('/api/register', { name:this.name,email:this.email,password:this.password });
-        alert(res.data.message);
-      } catch(e) { alert(e.response.data.message || 'Помилка'); }
+        const res = await axios.post('/api/register', {
+          name: this.name,
+          email: this.email,
+          password: this.password
+        });
+
+        // Викликаємо подію у Header/App.vue
+        this.$emit('register-success', res.data.user);
+
+        // Зберігаємо користувача в localStorage
+        localStorage.setItem('user', JSON.stringify(res.data.user));
+
+        // Перехід на Dashboard
+        this.$router.push('/dashboard');
+
+      } catch(e) {
+        alert(e.response?.data?.message || 'Помилка реєстрації');
+      }
     }
   }
 };

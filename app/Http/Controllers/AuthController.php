@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use MongoDB\BSON\ObjectId;
+
 
 class AuthController extends Controller
 {
@@ -38,5 +41,32 @@ class AuthController extends Controller
         }
 
         return response()->json(['message'=>'Вхід успішний', 'user'=>$user]);
+    }
+
+    public function updateAvatar(Request $request, $id)
+    {
+        $request->validate([
+            'avatar' => 'required|image|max:5120', // макс 5MB
+        ]);
+
+        $user = User::find($id);
+        if (!$user) return response()->json(['message' => 'Користувач не знайдений'], 404);
+
+        // видаляємо стару аватарку
+        if ($user->avatar) {
+            $oldPath = str_replace('/storage/', '', $user->avatar);
+            Storage::disk('public')->delete($oldPath);
+        }
+
+        // зберігаємо нову
+        $file = $request->file('avatar');
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $path = $file->storeAs('avatars', $filename, 'public');
+
+        // записуємо шлях у БД
+        $user->avatar = '/storage/' . $path;
+        $user->save();
+
+        return response()->json($user);
     }
 }
