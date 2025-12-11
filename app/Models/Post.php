@@ -22,4 +22,13 @@ class Post extends Model
     protected $casts = [
         'likes' => 'array',
     ];
+     public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', '_id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'post_id', '_id');
+    }
 }
