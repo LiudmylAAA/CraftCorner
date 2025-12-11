@@ -159,34 +159,50 @@ class PostController extends Controller
     }
 
     // Редагувати роботу
-    public function update(Request $request, $id)
-    {
-        $post = Post::find($id);
-        if (!$post) {
-            return response()->json(['message' => 'Робота не знайдена'], 404);
-        }
-
-        $request->validate([
-            'title'       => 'required|string|max:200',
-            'description' => 'nullable|string',
-        ]);
-
-        $post->title       = $request->title;
-        $post->description = $request->description;
-        $post->save();
-
-        return response()->json($post);
+   public function update(Request $request, $id)
+{
+    $post = Post::find($id);
+    if (!$post) {
+        return response()->json(['message' => 'Робота не знайдена'], 404);
     }
+
+    $request->validate([
+        'user_id'     => 'required',
+        'title'       => 'required|string|max:200',
+        'description' => 'nullable|string',
+    ]);
+
+    if ((string)$post->user_id !== (string)$request->user_id) {
+        return response()->json(['message' => 'У вас немає прав редагувати цю роботу'], 403);
+    }
+
+    $post->title       = $request->title;
+    $post->description = $request->description;
+    $post->save();
+
+    return response()->json($post);
+}
+
 
     //  Видалити роботу
-    public function destroy($id)
-    {
-        $post = Post::find($id);
-        if (!$post) {
-            return response()->json(['message' => 'Робота не знайдена'], 404);
-        }
-
-        $post->delete();
-        return response()->json(['message' => 'Робота видалена']);
+    public function destroy(Request $request, $id)
+{
+    $post = Post::find($id);
+    if (!$post) {
+        return response()->json(['message' => 'Робота не знайдена'], 404);
     }
+
+    $request->validate([
+        'user_id' => 'required',
+    ]);
+
+    if ((string)$post->user_id !== (string)$request->user_id) {
+        return response()->json(['message' => 'У вас немає прав видаляти цю роботу'], 403);
+    }
+
+    $post->delete();
+
+    return response()->json(['message' => 'Робота видалена']);
+}
+
 }

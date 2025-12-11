@@ -72,22 +72,39 @@ export default {
     };
   },
   methods: {
-    toggleAvatarMenu() { this.showAvatarMenu = !this.showAvatarMenu; },
+    toggleAvatarMenu() {
+      this.showAvatarMenu = !this.showAvatarMenu;
+    },
+
     handleClickOutside(event) {
       const wrapper = this.$refs.avatarWrapper;
-      if (wrapper && !wrapper.contains(event.target)) this.showAvatarMenu = false;
+      if (wrapper && !wrapper.contains(event.target)) {
+        this.showAvatarMenu = false;
+      }
     },
+
     onFileChange(e) {
       const f = e.target.files[0];
-      if (!f) { this.file = null; this.preview = null; return; }
-      if (f.size > 5 * 1024 * 1024) { alert('Файл занадто великий (макс 5MB)'); this.file = null; this.preview = null; return; }
+      if (!f) {
+        this.file = null;
+        this.preview = null;
+        return;
+      }
+      if (f.size > 5 * 1024 * 1024) {
+        alert('Файл занадто великий (макс 5MB)');
+        this.file = null;
+        this.preview = null;
+        return;
+      }
       this.file = f;
       const reader = new FileReader();
-      reader.onload = ev => (this.preview = ev.target.result);
+      reader.onload = (ev) => (this.preview = ev.target.result);
       reader.readAsDataURL(f);
     },
+
     async submitWork() {
       if (!this.newWork.title) return alert('Введіть назву роботи');
+
       try {
         const formData = new FormData();
         formData.append('title', this.newWork.title);
@@ -108,63 +125,80 @@ export default {
         alert(err.response?.data?.message || 'Помилка при додаванні роботи');
       }
     },
-async changeAvatar(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  if (file.size > 5 * 1024 * 1024) { alert("Файл занадто великий (макс 5MB)"); return; }
 
-  const formData = new FormData();
-  formData.append("avatar", file);
+    async changeAvatar(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Файл занадто великий (макс 5MB)');
+        return;
+      }
 
-  try {
-    const res = await axios.post(`/api/users/${this.user._id}/avatar`, formData, {
-      headers: { "Content-Type": "multipart/form-data" }
-    });
-    
-    // замість blob використовуємо шлях із сервера
-    this.user.avatar = res.data.avatar;
-    this.$emit("update-user", res.data);
-  } catch (err) {
-    console.error(err);
-    alert(err.response?.data?.message || "Помилка при зміні аватара");
-  }
-},
+      const formData = new FormData();
+      formData.append('avatar', file);
+
+      try {
+        const res = await axios.post(
+          `/api/users/${this.user._id}/avatar`,
+          formData,
+          { headers: { 'Content-Type': 'multipart/form-data' } }
+        );
+
+        this.user.avatar = res.data.avatar;
+        this.$emit('update-user', res.data);
+      } catch (err) {
+        console.error(err);
+        alert(err.response?.data?.message || 'Помилка при зміні аватара');
+      }
+    },
+
     async deleteAvatar() {
       if (!this.user?._id) return;
-      if (!confirm("Видалити аватар?")) return;
+      if (!confirm('Видалити аватар?')) return;
+
       try {
         const res = await axios.delete(`/api/users/${this.user._id}/avatar`);
         this.user.avatar = null;
         this.showAvatarMenu = false;
-        this.$emit("update-user", res.data);
-        alert("Аватар видалено!");
+        this.$emit('update-user', res.data);
+        alert('Аватар видалено!');
       } catch (err) {
         console.error(err);
-        alert(err.response?.data?.message || "Помилка при видаленні аватара");
+        alert(err.response?.data?.message || 'Помилка при видаленні аватара');
       }
     },
+
     goToWork(work) {
-      this.$router.push(`/work/${work._id || work.id}`);
+    this.$router.push(`/posts/${work._id || work.id}?from=dashboard`);
     },
+
+
     async fetchWorks() {
       try {
         const res = await axios.get('/api/posts');
         const userId = this.user?._id || this.user?.id || this.user;
-        this.works = (res.data || []).filter(p => String(p.user_id) === String(userId));
+
+        this.works = (res.data || []).filter((p) => {
+          const authorId = p.author?.id || p.user_id;
+          return authorId && String(authorId) === String(userId);
+        });
       } catch (e) {
         console.error('Помилка при завантаженні робіт', e);
       }
     }
   },
+
   mounted() {
     if (this.user) this.fetchWorks();
-    document.addEventListener("click", this.handleClickOutside);
+    document.addEventListener('click', this.handleClickOutside);
   },
+
   beforeUnmount() {
-    document.removeEventListener("click", this.handleClickOutside);
+    document.removeEventListener('click', this.handleClickOutside);
   }
 };
 </script>
+
 
 <style scoped>
 .dashboard {

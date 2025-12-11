@@ -68,9 +68,9 @@ export default {
         this.loading = false
       }
     },
-    openPost(id) {
-      this.$router.push(`/posts/${id}`)
-    },
+   openPost(id) {
+  this.$router.push(`/posts/${id}?from=catalog`);
+},
   },
   mounted() {
     this.loadPosts()
