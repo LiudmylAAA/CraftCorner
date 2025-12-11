@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Post;
 use App\Models\Comment;
+use App\Models\User;
 
 class PostController extends Controller
 {
@@ -159,50 +160,73 @@ class PostController extends Controller
     }
 
     // Редагувати роботу
-   public function update(Request $request, $id)
-{
-    $post = Post::find($id);
-    if (!$post) {
-        return response()->json(['message' => 'Робота не знайдена'], 404);
+    public function update(Request $request, $id)
+    {
+        $post = Post::find($id);
+        if (!$post) {
+            return response()->json(['message' => 'Робота не знайдена'], 404);
+        }
+
+        $request->validate([
+            'user_id'     => 'required',
+            'title'       => 'required|string|max:200',
+            'description' => 'nullable|string',
+        ]);
+
+        if ((string)$post->user_id !== (string)$request->user_id) {
+            return response()->json(['message' => 'У вас немає прав редагувати цю роботу'], 403);
+        }
+
+        $post->title       = $request->title;
+        $post->description = $request->description;
+        $post->save();
+
+        return response()->json($post);
     }
 
-    $request->validate([
-        'user_id'     => 'required',
-        'title'       => 'required|string|max:200',
-        'description' => 'nullable|string',
-    ]);
 
-    if ((string)$post->user_id !== (string)$request->user_id) {
-        return response()->json(['message' => 'У вас немає прав редагувати цю роботу'], 403);
+        //  Видалити роботу
+        public function destroy(Request $request, $id)
+    {
+        $post = Post::find($id);
+        if (!$post) {
+            return response()->json(['message' => 'Робота не знайдена'], 404);
+        }
+
+        $request->validate([
+            'user_id' => 'required',
+        ]);
+
+        if ((string)$post->user_id !== (string)$request->user_id) {
+            return response()->json(['message' => 'У вас немає прав видаляти цю роботу'], 403);
+        }
+
+        $post->delete();
+
+        return response()->json(['message' => 'Робота видалена']);
     }
 
-    $post->title       = $request->title;
-    $post->description = $request->description;
-    $post->save();
+    // ВИДАЛИТИ КОМЕНТАР (тільки адмін)
+    public function deleteComment(Request $request, string $id)
+    {
+        $request->validate([
+            'user_id' => 'required',
+        ]);
 
-    return response()->json($post);
-}
+        $user = User::find($request->user_id);
 
+        if (!$user || $user->email !== 'admin@gmail.com') {
+            return response()->json(['message' => 'Доступ заборонено'], 403);
+        }
 
-    //  Видалити роботу
-    public function destroy(Request $request, $id)
-{
-    $post = Post::find($id);
-    if (!$post) {
-        return response()->json(['message' => 'Робота не знайдена'], 404);
+        $comment = Comment::find($id);
+        if (!$comment) {
+            return response()->json(['message' => 'Коментар не знайдено'], 404);
+        }
+
+        $comment->delete();
+
+        return response()->json(['message' => 'Коментар видалено']);
     }
-
-    $request->validate([
-        'user_id' => 'required',
-    ]);
-
-    if ((string)$post->user_id !== (string)$request->user_id) {
-        return response()->json(['message' => 'У вас немає прав видаляти цю роботу'], 403);
-    }
-
-    $post->delete();
-
-    return response()->json(['message' => 'Робота видалена']);
-}
 
 }

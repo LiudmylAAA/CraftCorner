@@ -60,10 +60,23 @@
         Немає коментарів
       </div>
 
-      <div v-for="c in post.comments" :key="c.id" class="comment">
+    <div v-for="c in post.comments" :key="c.id" class="comment">
+    <div class="comment-header">
         <b>{{ c.author }}</b>
-        <p>{{ c.text }}</p>
-      </div>
+
+        <!--  кнопка тільки для адміна -->
+        <button
+        v-if="isAdmin"
+        class="comment-delete-btn"
+        @click.stop="deleteComment(c.id)"
+        >
+        Видалити
+        </button>
+    </div>
+
+    <p>{{ c.text }}</p>
+    </div>
+
 
       <textarea
         v-model="comment"
@@ -88,7 +101,7 @@ export default {
       editTitle: '',
       editDescription: '',
       fromPage: null,
-
+      isAdmin: false,
     }
   },
   async mounted() {
@@ -98,6 +111,7 @@ export default {
       try {
         const user = JSON.parse(userStr)
         this.userId = user._id || user.id || user.user_id || null
+         this.isAdmin = user.email === 'admin@gmail.com'
       } catch (e) {
         console.error('Помилка розбору user з localStorage', e)
       }
@@ -165,6 +179,36 @@ export default {
       }
     },
 
+async deleteComment(commentId) {
+  if (!this.isAdmin) return // на всякий випадок
+
+  if (!this.userId) {
+    alert('Увійдіть, щоб видаляти коментарі')
+    return
+  }
+
+  if (!confirm('Видалити цей коментар?')) return
+
+  try {
+    const res = await fetch(`/api/comments/${commentId}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: this.userId }),
+    })
+
+    if (!res.ok) {
+      console.error('Помилка видалення коментаря', await res.text())
+      alert('Не вдалося видалити коментар')
+      return
+    }
+
+    // видаляємо з масиву на фронті
+    this.post.comments = this.post.comments.filter(c => c.id !== commentId)
+  } catch (e) {
+    console.error(e)
+    alert('Сталася помилка при видаленні')
+  }
+},
 
     async sendComment() {
       if (!this.userId) {
@@ -258,7 +302,7 @@ export default {
         const res = await fetch(`/api/posts/${this.post.id}`, {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ user_id: this.userId }), // 🔐
+          body: JSON.stringify({ user_id: this.userId }), 
         })
 
         if (!res.ok) {
@@ -514,7 +558,7 @@ textarea:focus {
   color: #6b7280;
 }
 
-/* мобілка */
+
 @media (max-width: 768px) {
   .post {
     margin: 20px;
@@ -530,4 +574,25 @@ textarea:focus {
     font-size: 22px;
   }
 }
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comment-delete-btn {
+  all: unset !important;
+  color: #dc2626 !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+}
+
+.comment-delete-btn:hover {
+  color: #b91c1c !important; /* тільки зміна кольору */
+  text-decoration: none !important; /* 🔥 не підкреслює */
+}
+
+
+
 </style>

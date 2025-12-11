@@ -17,3 +17,4 @@ Route::post('/users/{id}/avatar', [AuthController::class, 'updateAvatar']);
 Route::get('posts/{id}', [PostController::class, 'show']);
 Route::post('posts/{id}/like', [PostController::class, 'toggleLike']);
 Route::post('posts/{id}/comments', [PostController::class, 'addComment']);
+Route::delete('comments/{id}', [PostController::class, 'deleteComment']);
