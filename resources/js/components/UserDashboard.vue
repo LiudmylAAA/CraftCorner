@@ -232,7 +232,7 @@ export default {
 }
 
 input, textarea {
-  width: 100%;
+  width: 97%;
   padding: 12px;
   background: #f0f9ff;
   border: 1px solid #d7f0ff;
@@ -339,21 +339,26 @@ input, textarea {
 }
 .btn-primary {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(90deg, #0ea5e9, #38bdf8);
-  color: white;
-  font-weight: 600;
-  border-radius: 12px;
+  margin-top: 12px;
+  padding: 12px 24px;
+  border-radius: 999px; /* як у коментарів */
   border: none;
-  cursor: pointer;
-  transition: .2s;
-  margin-top: 10px;
+  background: linear-gradient(135deg, #658dcfff, #5f7fc5ff);
+  color: #ffffff;
   font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
+
 .btn-primary:hover {
-  background: linear-gradient(90deg, #0284c7, #0ea5e9);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(3, 105, 161, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(59, 130, 246, 0.45);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 8px 18px rgba(59, 130, 246, 0.35);
 }
 
 </style>

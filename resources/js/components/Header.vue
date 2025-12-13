@@ -110,6 +110,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 9999;
 }
 
 /* модалка */
@@ -120,6 +121,7 @@ export default {
   width: 320px;
   position: relative;
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+  z-index: 10000;
 }
 
 /* ТАБИ */
