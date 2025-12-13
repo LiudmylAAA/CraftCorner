@@ -42,6 +42,42 @@ export default {
 </script>
 
 <style scoped>
-.input { display:block; width:100%; margin-bottom:10px; padding:8px; }
-.btn-submit { background:#1e3a8a; color:white; width:100%; padding:8px; border:none; border-radius:5px; cursor:pointer; }
+
+.input {
+  width: 90%;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 15px;
+  outline: none;
+  background: #fafafa;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input:focus {
+  border-color: #5f87bfff;
+  box-shadow: 0 0 0 1px #5f87bfff;
+}
+
+/* кнопка — як кнопка коментаря */
+.btn-submit {
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, #658dcfff, #5f7fc5ff);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(59, 130, 246, 0.45);
+}
+
 </style>

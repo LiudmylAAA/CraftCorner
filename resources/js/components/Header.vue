@@ -54,13 +54,136 @@ export default {
 </script>
 
 <style scoped>
-.header { background: #cce0ff; padding: 10px 20px; display:flex; justify-content:space-between; align-items:center; }
-.menu a { margin: 0 10px; color:#1e3a8a; text-decoration:none; }
-.menu a:hover { text-decoration:underline; }
-.btn-auth { background: #1e3a8a; color:white; border:none; padding:8px 16px; border-radius:5px; cursor:pointer; }
-.modal-backdrop { position:fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; }
-.modal { background:white; padding:20px; border-radius:10px; width:300px; position:relative; }
-.tabs button { padding:8px 12px; cursor:pointer; border:none; background:#ddd; margin-right:5px; border-radius:5px 5px 0 0; }
-.tabs button.active { background:#1e3a8a; color:white; }
-.modal-close { position:absolute; top:5px; right:5px; border:none; background:transparent; font-size:18px; cursor:pointer; }
+.header {
+  background: #e8f1ff;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* меню */
+.menu a {
+  margin: 0 10px;
+  color: #5f7fc5;
+  text-decoration: none;   
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.menu a:hover {
+  text-decoration: none;
+}
+
+.menu a.active,
+.menu a.router-link-active {
+  color: #ffffff;      
+  font-weight: 600;
+}
+
+
+/* кнопка авторизації */
+.btn-auth {
+  background: linear-gradient(135deg, #658dcf, #5f7fc5);
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+   text-decoration: none; 
+}
+
+.btn-auth:hover {
+  transform: translateY(-1px);
+  
+  box-shadow: 0 10px 22px rgba(59, 130, 246, 0.35);
+}
+
+/* затемнення */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* модалка */
+.modal {
+  background: white;
+  padding: 22px;
+  border-radius: 14px;
+  width: 320px;
+  position: relative;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+}
+
+/* ТАБИ */
+.tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.tabs button {
+  flex: 1;
+  padding: 10px 0;
+  cursor: pointer;
+  border: none;
+  background: #e5edff;
+  border-radius: 10px 10px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e3a8a;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.tabs button.active {
+  background: linear-gradient(135deg, #658dcf, #5f7fc5);
+  color: white;
+}
+
+/* хрестик */
+.modal-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.modal-close:hover {
+  color: #1e3a8a;
+}
+.btn-logout {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 12px;
+  color: #1e40af;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+
+.btn-logout:hover {
+  color: #ffffff;
+}
+
+
+.btn-logout.active {
+  color: #ffffff;
+  font-weight: 600;
+}
+
 </style>
